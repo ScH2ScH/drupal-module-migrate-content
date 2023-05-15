@@ -1,0 +1,11 @@
+name: Migrate Content
+description: Allows for migration of content from one environment to other.
+package: Custom
+
+type: module
+core_version_requirement: ^9.4
+
+dependencies:
+  - drupal:views
+
+version: '1.0'
