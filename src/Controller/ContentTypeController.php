@@ -18,8 +18,24 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Controller for handling content type related operations.
  */
-class ContentTypeController extends ControllerBase {
+class ContentTypeController extends ControllerBase
+{
 
+
+  /*
+   * logic:
+   * get selected nids
+   * foreach
+    * check if node content type exist on prod and have same definitions
+    * check if uids exist on prod server, insert if not, update if yes
+    * transfer files, delete files not in use
+   * put the above in queue job
+   */
+
+  /**
+   * @return \Psr\Http\Message\ResponseInterface|null
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
   function getNodeInformation() {
     $tempstore = \Drupal::service('tempstore.private')->get('migrate_content');
     $username = $tempstore->get('username');

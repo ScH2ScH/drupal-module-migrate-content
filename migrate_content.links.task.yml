@@ -1,0 +1,6 @@
+migrate_content.custom_sync:
+  route_name: entity.node.multiple_custom_sync
+  base_route: entity.node.canonical
+  title: 'Sync with Production'
+  appears_on:
+    - entity.node.collection

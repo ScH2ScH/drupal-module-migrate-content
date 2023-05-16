@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_content
+  module:
+    - node
+    - pathauto
+id: migrate_content_migrate_node
+label: 'Migrate content'
+type: node
+plugin: migrate_content_migrate_node
+configuration: {  }
