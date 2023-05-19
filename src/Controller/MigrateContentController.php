@@ -13,13 +13,14 @@ use Drupal\file\Entity\File;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Controller for handling content type related operations.
  */
-class ContentTypeController extends ControllerBase {
+class MigrateContentController extends ControllerBase {
 
 
     /*
@@ -32,7 +33,12 @@ class ContentTypeController extends ControllerBase {
      * put the above in queue job
      */
 
-
+    public function webServicesLinkPage() {
+        // Generate the URL for the ConnectForm route.
+        $routeName = 'migrate_content.connect_form';
+        $url = Url::fromRoute($routeName)->toString();
+        return new RedirectResponse($url);
+    }
 
     public function listContentTypes() {
 

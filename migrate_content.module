@@ -1,2 +1,15 @@
 <?php
-
+/**
+ * Implements hook_form_alter().
+ */
+function migrate_content_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+    // Check if the form is the configuration form.
+    if ($form_id === 'system_admin_config_form') {
+        // Add your custom link to the form.
+        $form['custom_link'] = [
+            '#type' => 'markup',
+            '#markup' => '<a href="/custom-link">Custom Link</a>',
+            '#weight' => 99, // Adjust the weight to control the position of the link.
+        ];
+    }
+}

@@ -1,23 +1,23 @@
-migrate_content.content_types:
-    path: '/admin/content/types'
-    defaults:
-        _controller: '\Drupal\migrate_content\Controller\ContentTypeController::listContentTypes'
-        _title: 'Content Types'
-    requirements:
-        _permission: 'administer content types'
-
-migrate_content.other_instance_connection:
-    path: '/admin/content/server_connection'
+migrate_content.connect_form:
+    path: '/admin/config/migrate_content/connect-form'
     defaults:
         _form: '\Drupal\migrate_content\Form\ConnectForm'
-        _title: 'Connection'
+        _title: 'Connect Form'
     requirements:
-        _permission: 'administer content types'
+        _permission: 'administer content'
 
 entity.node.multiple_custom_sync:
     path: '/admin/content/sync'
     defaults:
-        _controller: '\Drupal\migrate_content\Controller\ContentTypeController::listContentTypes'
+        _controller: '\Drupal\migrate_content\Controller\MigrateContentController::listContentTypes'
         _title: 'Sync Nodes'
+    requirements:
+        _permission: 'administer content'
+
+migrate_content.web_services_link:
+    path: '/admin/config/migrate_content'
+    defaults:
+        _title: 'Custom Links'
+        _controller: '\Drupal\migrate_content\Controller\MigrateContentController::webServicesLinkPage'
     requirements:
         _permission: 'administer content'

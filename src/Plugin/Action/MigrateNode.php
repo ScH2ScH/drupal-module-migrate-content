@@ -81,7 +81,7 @@ class MigrateNode extends ActionBase implements ContainerFactoryPluginInterface 
         }
         // Create a custom error message with a link.
         $error_message = $this->t("You don't have access to execute Migrate content on this Content. Please <a href='@login'>login</a> to other Drupal instance to perform this action.", [
-            '@login' => Url::fromRoute('migrate_content.other_instance_connection')
+            '@login' => Url::fromRoute('migrate_content.web_services_link')
                 ->toString(),
         ]);
         // Set the error message in the Drupal message system.
