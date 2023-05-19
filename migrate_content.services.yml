@@ -1,0 +1,4 @@
+services:
+    migrate_content.login_controller:
+        class: Drupal\migrate_content\Controller\LoginController
+        arguments: ['@messenger']

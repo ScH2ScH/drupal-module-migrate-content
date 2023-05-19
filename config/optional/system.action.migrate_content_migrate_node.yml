@@ -1,14 +1,14 @@
 langcode: en
 status: true
 dependencies:
-  enforced:
+    enforced:
+        module:
+            - migrate_content
     module:
-      - migrate_content
-  module:
-    - node
-    - pathauto
+        - node
+        - pathauto
 id: migrate_content_migrate_node
 label: 'Migrate content'
 type: node
 plugin: migrate_content_migrate_node
-configuration: {  }
+configuration: { }

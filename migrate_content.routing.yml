@@ -1,23 +1,23 @@
 migrate_content.content_types:
-  path: '/admin/content/types'
-  defaults:
-    _controller: '\Drupal\migrate_content\Controller\ContentTypeController::listContentTypes'
-    _title: 'Content Types'
-  requirements:
-    _permission: 'administer content types'
+    path: '/admin/content/types'
+    defaults:
+        _controller: '\Drupal\migrate_content\Controller\ContentTypeController::listContentTypes'
+        _title: 'Content Types'
+    requirements:
+        _permission: 'administer content types'
 
 migrate_content.other_instance_connection:
-  path: '/admin/content/server_connection'
-  defaults:
-    _form: '\Drupal\migrate_content\Form\ConnectForm'
-    _title: 'Connection'
-  requirements:
-    _permission: 'administer content types'
+    path: '/admin/content/server_connection'
+    defaults:
+        _form: '\Drupal\migrate_content\Form\ConnectForm'
+        _title: 'Connection'
+    requirements:
+        _permission: 'administer content types'
 
 entity.node.multiple_custom_sync:
-  path: '/admin/content/sync'
-  defaults:
-    _controller: '\Drupal\migrate_content\Controller\ContentTypeController::listContentTypes'
-    _title: 'Sync Nodes'
-  requirements:
-    _permission: 'administer content'
+    path: '/admin/content/sync'
+    defaults:
+        _controller: '\Drupal\migrate_content\Controller\ContentTypeController::listContentTypes'
+        _title: 'Sync Nodes'
+    requirements:
+        _permission: 'administer content'

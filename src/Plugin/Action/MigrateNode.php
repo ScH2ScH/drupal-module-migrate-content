@@ -6,6 +6,8 @@ use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\migrate_content\Controller\LoginController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -21,99 +23,112 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class MigrateNode extends ActionBase implements ContainerFactoryPluginInterface {
 
+    /**
+     * The Messenger service.
+     *
+     * @var \Drupal\Core\Messenger\MessengerInterface
+     */
+    protected $messenger;
 
-  /**
-   * The Messenger service.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
+    /**
+     * The LoginController.
+     *
+     * @var \Drupal\migrate_content\Controller\LoginController
+     */
+    protected $loginController;
 
-  /**
-   * Logger service.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $logger;
-
-//  /**
-//   * The path alias manager.
-//   *
-//   * @var \Drupal\path_alias\AliasManagerInterface
-//   */
-//  protected $aliasManager;
-//
-//  /**
-//   * Language manager for retrieving the default Langcode.
-//   *
-//   * @var \Drupal\Core\Language\LanguageManagerInterface
-//   */
-//  protected $languageManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = new static($configuration, $plugin_id, $plugin_definition);
-    $instance->logger = $container->get('logger.factory')->get('action_plugin_examples');
-    $instance->messenger = $container->get('messenger');
-//    $instance->aliasManager = $container->get('path_alias.manager');
-//    $instance->languageManager = $container->get('language_manager');
-    return $instance;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function access($node, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    $tempstore = \Drupal::service('tempstore.private')->get('migrate_content');
-    if ($tempstore->get('username') ==! null) {
-      return TRUE;
+    /**
+     * Sets the MessengerInterface dependency.
+     *
+     * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+     *   The Messenger service.
+     */
+    public function setMessenger(MessengerInterface $messenger) {
+        $this->messenger = $messenger;
     }
-    // Create a custom error message with a link.
-    $error_message = $this->t("You don't have access to execute Migrate content on the Content bnmbnmb. Please <a href='@login'>login</a> to other Drupal instance to perform this action.", [
-      '@login' => Url::fromRoute('migrate_content.other_instance_connection')->toString(),
-    ]);
-    // Set the error message in the Drupal message system.
-    $this->messenger->addError($error_message);
 
-    return FALSE;
-  }
+    /**
+     * Sets the LoginController dependency.
+     *
+     * @param \Drupal\migrate_content\Controller\LoginController $loginController
+     *   The LoginController service.
+     */
+    public function setLoginController(LoginController $loginController) {
+        $this->loginController = $loginController;
+    }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function execute($node = NULL) {
+    /**
+     * {@inheritdoc}
+     */
+    public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+        $instance = new static(
+            $configuration,
+            $plugin_id,
+            $plugin_definition
+        );
+        $instance->setMessenger($container->get('messenger'));
+        $instance->setLoginController($container->get('migrate_content.login_controller'));
+        return $instance;
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function access($node, AccountInterface $account = NULL, $return_as_object = FALSE)
+    {
 
-//    /** @var \Drupal\node\NodeInterface $node */
-//
-//    $language = $this->languageManager->getCurrentLanguage()->getId();
-//
-//    $old_alias = $this->aliasManager->getAliasByPath('/node/' . $node->id(), $language);
-//
-//    $title = $node->getTitle();
-//    $date = $node->created->value;
-//    $year = date('Y', $date);
-//    // $old_alias = $node->path->alias;
-//    $new_title = $this->t('[Archive] | @title', ['@title' => $title]);
-//    $node->setTitle($new_title);
-//    $node->setSticky(FALSE);
-//    $node->setPromoted(FALSE);
-//
-//    $new_alias = '/archive/' . $year . $old_alias;
-//    $node->set("path", [
-//      'alias' => $new_alias,
-//      'langcode' => $language,
-//      'pathauto' => PathautoState::SKIP,
-//    ]);
-//
-//    $node->save();
-//
-//    $message = $this->t('Node with NID : @id Archived.', ['@id' => $node->id()]);
-//
-//    $this->logger->notice($message);
-//    $this->messenger->addMessage($message);
+        if ($this->loginController->isLoggedInToOtherInstance()) {
+            return TRUE;
+        }
+        // Create a custom error message with a link.
+        $error_message = $this->t("You don't have access to execute Migrate content on this Content. Please <a href='@login'>login</a> to other Drupal instance to perform this action.", [
+            '@login' => Url::fromRoute('migrate_content.other_instance_connection')
+                ->toString(),
+        ]);
+        // Set the error message in the Drupal message system.
+        $this->messenger->addError($error_message);
 
-  }
+        return FALSE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($node = NULL)
+    {
+
+        $message = $this->t('Node with NID : @id Migratedd.', ['@id' => $node->id()]);
+
+        $this->messenger->addMessage($message);
+
+        //    /** @var \Drupal\node\NodeInterface $node */
+        //
+        //    $language = $this->languageManager->getCurrentLanguage()->getId();
+        //
+        //    $old_alias = $this->aliasManager->getAliasByPath('/node/' . $node->id(), $language);
+        //
+        //    $title = $node->getTitle();
+        //    $date = $node->created->value;
+        //    $year = date('Y', $date);
+        //    // $old_alias = $node->path->alias;
+        //    $new_title = $this->t('[Archive] | @title', ['@title' => $title]);
+        //    $node->setTitle($new_title);
+        //    $node->setSticky(FALSE);
+        //    $node->setPromoted(FALSE);
+        //
+        //    $new_alias = '/archive/' . $year . $old_alias;
+        //    $node->set("path", [
+        //      'alias' => $new_alias,
+        //      'langcode' => $language,
+        //      'pathauto' => PathautoState::SKIP,
+        //    ]);
+        //
+        //    $node->save();
+        //
+        //    $message = $this->t('Node with NID : @id Archived.', ['@id' => $node->id()]);
+        //
+        //    $this->logger->notice($message);
+        //    $this->messenger->addMessage($message);
+
+    }
 
 }
