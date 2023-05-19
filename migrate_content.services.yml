@@ -2,3 +2,7 @@ services:
     migrate_content.login_controller:
         class: Drupal\migrate_content\Controller\LoginController
         arguments: ['@messenger']
+
+    migrate_content.api_controller:
+        class: Drupal\migrate_content\Controller\ApiController
+        arguments: [ '@migrate_content.login_controller' ]

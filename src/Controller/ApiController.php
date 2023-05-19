@@ -2,6 +2,7 @@
 
 namespace Drupal\migrate_content\Controller;
 
+use Drupal\migrate_content\Model\Credentials;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -9,38 +10,47 @@ use GuzzleHttp\Exception\GuzzleException;
 /**
  * Controller for handling API calls
  */
-class ApiController {
+class ApiController
+{
 
+    /**
+     * @var Client
+     */
     private Client $httpClient;
 
-    private string $username;
+    /**
+     * @var Credentials|null
+     */
+    private Credentials $credentials;
 
-    private string $password;
-    private string $siteUrl;
-
-    private string $csrf_token;
-
-    public function __construct() {
+    /**
+     * @param LoginController $loginController
+     */
+    public function __construct(LoginController $loginController)
+    {
         $this->httpClient = new Client();
-        [
-            $this->username,
-            $this->password,
-            $this->siteUrl,
-            $this->csrf_token,
-        ] = SessionController::getCredentialsFromSession();
+        $this->credentials = $loginController->getCredentials();
     }
 
     // Function to send a request
+
+    /**
+     * @param $method
+     * @param $urlPath
+     * @param $headers
+     * @param $body
+     * @return \Psr\Http\Message\StreamInterface|null
+     */
     public function sendRequest($method, $urlPath, $headers = [], $body = NULL)
     {
         $headers = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-            'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password),
-            'X-CSRF-Token' => $this->csrf_token,
+            'Authorization' => 'Basic ' . base64_encode($this->credentials->getUsername() . ':' . $this->credentials->getPassword()),
+            'X-CSRF-Token' => $this->credentials->getCsrfToken(),
         ];
 
-        $url = $this->siteUrl . $urlPath;
+        $url = $this->credentials->getSiteUrl() . $urlPath;
         $options = [
             'headers' => $headers,
         ];
@@ -61,7 +71,12 @@ class ApiController {
         }
     }
 
-    public function getContentType(string $contentType) {
+    /**
+     * @param string $contentType
+     * @return void
+     */
+    public function getContentType(string $contentType)
+    {
 
     }
 
@@ -70,44 +85,53 @@ class ApiController {
      *
      * @return bool
      */
-    public function checkIfUidAlreadyExists(string $contentType): bool {
+    public function checkIfUidAlreadyExists(string $contentType): bool
+    {
         //if true, update
         //if false, insert
         return FALSE;
     }
 
-    public function patchContent() {
+    /**
+     * @param $nodePayload
+     * @return void
+     */
+    public function patchNode($nodePayload)
+    {
 
     }
 
-    public function postContent($nodePayload) {
-
-        /* these few cannot be transferred */
-        unset($nodePayload['nid']);
-        unset($nodePayload['revision_timestamp']);
-        unset($nodePayload['revision_uid']);
-        unset($nodePayload['changed']);
-
+    /**
+     * @param $nodePayload
+     * @return void
+     */
+    public function postNode($nodePayload)
+    {
 
         $urlPath = '/node?_format=json';
-        $responseBody = $this->sendRequest('POST', $urlPath);
-        var_dump($responseBody->getContents());
-        die();
-        return [];
-    }
+        $responseBody = $this->sendRequest('POST', $urlPath, [], $nodePayload);
 
-    public function postFiles() {
 
     }
 
-    public function getNode($uid)
+    /**
+     * @return void
+     */
+    public function postFiles()
+    {
+
+    }
+
+    /**
+     * @param $uid
+     * @return \Psr\Http\Message\StreamInterface|null
+     */
+    public function getNode($uid): ?\Psr\Http\Message\StreamInterface
     {
         $urlPath = '/node/' . $uid . '?_format=json';
 
         // Send the GET request.
-        $response = $this->sendRequest('GET', $urlPath);
-
-        return $response;
+        return $this->sendRequest('GET', $urlPath);
     }
 
 }

@@ -6,10 +6,20 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Helper;
 
+/**
+ *
+ */
 class LoginController
 {
 
-    public function login($username, $password, $siteUrl) {
+    /**
+     * @param $username
+     * @param $password
+     * @param $siteUrl
+     * @return void
+     */
+    public function login($username, $password, $siteUrl)
+    {
         // Create a Guzzle HTTP client.
         $client = new Client();
         $messenger = \Drupal::messenger();
@@ -53,7 +63,8 @@ class LoginController
     /**
      * @return \Drupal\migrate_content\Model\Credentials
      */
-    public function getCredentials(): ?\Drupal\migrate_content\Model\Credentials {
+    public function getCredentials(): ?\Drupal\migrate_content\Model\Credentials
+    {
         return SessionController::getCredentialsFromSession();
     }
 
@@ -65,6 +76,9 @@ class LoginController
         return $this->getCredentials() !== NULL;
     }
 
+    /**
+     * @return void
+     */
     public function logout(): void
     {
         SessionController::emptySession();

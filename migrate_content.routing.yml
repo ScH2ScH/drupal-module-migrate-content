@@ -6,14 +6,6 @@ migrate_content.connect_form:
     requirements:
         _permission: 'administer content'
 
-entity.node.multiple_custom_sync:
-    path: '/admin/content/sync'
-    defaults:
-        _controller: '\Drupal\migrate_content\Controller\MigrateContentController::listContentTypes'
-        _title: 'Sync Nodes'
-    requirements:
-        _permission: 'administer content'
-
 migrate_content.web_services_link:
     path: '/admin/config/migrate_content'
     defaults:

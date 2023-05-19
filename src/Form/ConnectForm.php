@@ -12,7 +12,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ConnectForm extends FormBase {
+/**
+ *
+ */
+class ConnectForm extends FormBase
+{
 
     /**
      * The Messenger service.
@@ -28,24 +32,31 @@ class ConnectForm extends FormBase {
      * @var \Drupal\migrate_content\Controller\LoginController
      */
     protected $loginController;
+
     /**
      * Class constructor.
      *
      * @param \Drupal\Core\Messenger\MessengerInterface $messenger
      *   The messenger service.
      */
-    public function __construct(MessengerInterface $messenger) {
+    public function __construct(MessengerInterface $messenger)
+    {
         $this->messenger = $messenger;
     }
 
-    public function getFormId() {
+    /**
+     * @return string
+     */
+    public function getFormId()
+    {
         return 'example_form';
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function create(ContainerInterface $container): ConnectForm|static {
+    public static function create(ContainerInterface $container): ConnectForm|static
+    {
         $form = new static(
             $container->get('messenger')
         );
@@ -53,6 +64,11 @@ class ConnectForm extends FormBase {
         return $form;
     }
 
+    /**
+     * @param array $form
+     * @param FormStateInterface $form_state
+     * @return array
+     */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
 
@@ -98,10 +114,23 @@ class ConnectForm extends FormBase {
         return $form;
     }
 
-    public function validateForm(array &$form, FormStateInterface $form_state) {
+    /**
+     * @param array $form
+     * @param FormStateInterface $form_state
+     * @return void
+     */
+    public function validateForm(array &$form, FormStateInterface $form_state)
+    {
         // Perform custom validation if needed.
     }
-    public function submitForm(array &$form, FormStateInterface $form_state) {
+
+    /**
+     * @param array $form
+     * @param FormStateInterface $form_state
+     * @return void
+     */
+    public function submitForm(array &$form, FormStateInterface $form_state)
+    {
         // Handle form submission.
         $values = $form_state->getValues();
         // Access the form values using $values['server_url'], $values['email'], $values['password'].
@@ -112,6 +141,11 @@ class ConnectForm extends FormBase {
         $this->loginController->login($username, $password, $siteUrl);
     }
 
+    /**
+     * @param array $form
+     * @param FormStateInterface $form_state
+     * @return void
+     */
     public function logoutSubmit(array &$form, FormStateInterface $form_state)
     {
         // Clear the stored CSRF token or perform any other necessary logout actions.

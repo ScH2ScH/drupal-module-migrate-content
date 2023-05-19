@@ -5,6 +5,9 @@ namespace Drupal\migrate_content\Controller;
 use Drupal\migrate_content\Model\Credentials;
 use Helper;
 
+/**
+ *
+ */
 class SessionController
 {
 
@@ -33,6 +36,9 @@ class SessionController
         return $tempstore->get('credentials');
     }
 
+    /**
+     * @return void
+     */
     public static function emptySession(): void
     {
         $tempstore = self::getTempStore();
